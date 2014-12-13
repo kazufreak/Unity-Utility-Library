@@ -1,46 +1,38 @@
 ﻿#pragma strict
 
-var x : float = 0.0f;
-var y : float = 0.0f;
-var width : float = 1.0f;
-var height : float = 1.0f;
-
-var screen : Vector3;
-
-var cam : GameObject;
-
+var aspectRatioCtrl : Aspect_Ratio_Controller = null;
+var x : float = 0.0f;           // X
+var y : float = 0.0f;           // Y
+var width : float = 1.0f;       // width
+var height : float = 1.0f;      // height
 var enable : boolean = true;
 
 function Update()
 {
-	var texture : GUITexture;
-	
-	texture = GetComponent( GUITexture );
-	
-	if( !texture ){
-		return;
-	}
+    var texture : GUITexture;
+    
+    texture = GetComponent(GUITexture);
+    
+    // this component must exist in same GameObject
+    if (!texture)   { return; }
 
-	if( !cam || !enable ){
-		screen.Set( Screen.width, Screen.height, 1.0f );
-		texture.pixelInset.x = x * Screen.width;
-		texture.pixelInset.y = y * Screen.height;
-		texture.pixelInset.width = width * Screen.width;
-		texture.pixelInset.height = height * Screen.height;
-	}
-	else{
-		var rect : Rect;
-		var h : float;
-		var w : float;
-		rect = cam.GetComponent( Aspect_Ratio_Controller ).rect;
-		h = cam.GetComponent( Aspect_Ratio_Controller ).height;
-		w = cam.GetComponent( Aspect_Ratio_Controller ).width;
-		texture.pixelInset.x = ( x * rect.width ) * Screen.width;
-		texture.pixelInset.y = ( y * rect.height ) * Screen.height;
-		texture.pixelInset.width = width * rect.width * Screen.width;
-		texture.pixelInset.height = height * rect.height * Screen.height;
-	}
+    // default resolution
+    if (!aspectRatioCtrl || !enable) {
+        texture.pixelInset.x = x * Screen.width;
+        texture.pixelInset.y = y * Screen.height;
+        texture.pixelInset.width = width * Screen.width;
+        texture.pixelInset.height = height * Screen.height;
+    }
+    // resolution under control by Aspect_Ratio_Controller
+    else {
+        var rect : Rect;
+        rect = aspectRatioCtrl.GetCameraRect();
+        texture.pixelInset.x = (x * rect.width) * Screen.width;
+        texture.pixelInset.y = (y * rect.height) * Screen.height;
+        texture.pixelInset.width = width * rect.width * Screen.width;
+        texture.pixelInset.height = height * rect.height * Screen.height;
+    }
 }
 
 
-@script AddComponentMenu( "Colorful-Pico Lib/Cross-Platform/Cross-Platform GUI Controller" )
+@script AddComponentMenu("Colorful Pico/Lib/Cross Platform/Cross Platform GUI Controller")
